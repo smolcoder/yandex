@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 
@@ -20,7 +21,6 @@ public class SuffAutomata implements Cloneable {
 		State sufLink;
 		int length;
 		Map<Character, State> next;	
-		State par;
 		
 		State() {
 			num = 0;
@@ -87,7 +87,7 @@ public class SuffAutomata implements Cloneable {
 			clone.sufLink = q.sufLink;
 			clone.pos = pos;
 			q.sufLink = clone; 
-			while (p != null && p.next.get(c).equals(q)) {
+			while (p != null && p.next.get(c) == q) {
 				p.next.put(c, clone);
 				p = p.sufLink;
 			}
@@ -96,17 +96,21 @@ public class SuffAutomata implements Cloneable {
 		last = cur;
 	}
 	
-	void dfs(char c, int st, int[] masks) {		
+	void dfs(char c, int st, int[] masks, boolean[] visit) {		
+		if (visit[st]) {
+			return;
+		}
+		visit[st] = true;
 		for (Entry<Character, State> e : states.get(st).next.entrySet()) {			
 			if (e.getValue() != null) {
-				dfs(e.getKey(), e.getValue().num, masks);
+				dfs(e.getKey(), e.getValue().num, masks, visit);
 				if ('A' <= e.getKey() && e.getKey() <= 'J') {
 					masks[st] |= 1 << (e.getKey() - 'A');
 				} else {
 					masks[st] |= masks[e.getValue().num];
 				}
 			}
-		}
+		}		
 	}
 	
 	public int size() {
@@ -116,7 +120,7 @@ public class SuffAutomata implements Cloneable {
 		return states.get(stateNum).length;
 	}
 	
-	static void LCS(String[] strings) {
+	static String LCS(String[] strings) {
 		int k = strings.length;
 		char[] delimiters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 		StringBuilder sb = new StringBuilder();
@@ -125,8 +129,10 @@ public class SuffAutomata implements Cloneable {
 		}
 		SuffAutomata sa = new SuffAutomata(sb.toString());
 		int[] masks = new int[sa.size()];
+		boolean[] visit = new boolean[sa.size()];
 		Arrays.fill(masks, 0);
-		sa.dfs(' ', 0, masks);
+		Arrays.fill(visit, false);
+		sa.dfs(' ', 0, masks, visit);
 		int ans = 0;
 		int bestState = -1;
 		for (int i = 0; i < sa.size(); ++i) {
@@ -135,10 +141,13 @@ public class SuffAutomata implements Cloneable {
 				ans = sa.getMaxLen(i);
 			}
 		}
-		//System.out.println(ans + " " + sa.getState(bestState).pos);
-		for (int i = sa.getState(bestState).pos - ans + 1; i <= sa.getState(bestState).pos; ++i) {
-			System.out.print(sb.charAt(i));
+		if (bestState == -1) {
+			return "";
+		} else {
+			//System.out.println(ans + " " + sa.getState(bestState).pos);
+			return sb.toString().substring(sa.getState(bestState).pos - ans + 1, sa.getState(bestState).pos + 1);
 		}
+		
 	}
 	
 	public String toString() {
@@ -158,16 +167,14 @@ public class SuffAutomata implements Cloneable {
 	
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		MyScanner in = new MyScanner("in.txt");
-//		String s = "abbb";
-//		SuffAutomata sa = new SuffAutomata(s);
-//		System.out.print(sa);
+		//MyScanner in = new MyScanner("in.txt");		
+		Scanner in = new Scanner(System.in); 
 		int k = in.nextInt();
 		String[] s = new String[k];
 		for (int i = 0; i < k; ++i) {
 			s[i] = in.next();
 		}
-		LCS(s);		
+		System.out.print(LCS(s));		
 	}
 	
 	static class MyScanner {
