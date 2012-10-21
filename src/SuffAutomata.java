@@ -119,12 +119,13 @@ public class SuffAutomata implements Cloneable {
 	public int getMaxLen(int stateNum) {
 		return states.get(stateNum).length;
 	}
+
 	
 	static String LCS(String[] strings) {
 		int k = strings.length;
 		char[] delimiters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < k; ++i) {
+		for (int i = 0; i < k; ++i) {	
 			sb.append(strings[i] + delimiters[i]);
 		}
 		SuffAutomata sa = new SuffAutomata(sb.toString());

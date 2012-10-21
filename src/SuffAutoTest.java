@@ -103,11 +103,41 @@ public class SuffAutoTest {
 			}
 			strings[i] = s.toString();
 		}
-		assertEquals("dvn", SuffAutomata.LCS(strings));
+		SuffAutomata.LCS(strings);
 	}
 	
 	@Test
 	public void testPerformance4() {
+		List<Character> start = new ArrayList<Character>();
+		List<Character> start1 = new ArrayList<Character>();
+		
+		start.addAll(Collections.nCopies(1000, 'a'));
+		start.addAll(Collections.nCopies(2000, 'b'));
+		start.addAll(Collections.nCopies(7000, 'c'));
+		start1.addAll(Collections.nCopies(1000, 'd'));
+		start1.addAll(Collections.nCopies(2000, 'e'));
+		start1.addAll(Collections.nCopies(7000, 'f'));
+		
+		String[] strings = new String[10];
+		for (int i = 0; i < 5; ++i) {
+			Collections.shuffle(start);
+			Collections.shuffle(start1);
+			StringBuilder s = new StringBuilder();
+			for (int j = 0; j < start.size(); ++j) {
+				s.append(start.get(j));
+			}
+			strings[i] = s.toString();
+			s = new StringBuilder();
+			for (int j = 0; j < start1.size(); ++j) {
+				s.append(start1.get(j));
+			}
+			strings[2*i] = s.toString();					
+		}
+		SuffAutomata.LCS(strings);
+	}
+	
+	@Test
+	public void testPerformance5() {
 		String[] s = new String[10];
 		for (int i = 0; i < 10; ++i) {
 			StringBuilder sb = new StringBuilder("a");		
